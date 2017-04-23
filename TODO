@@ -1,0 +1,30 @@
+- check ext2 special flags, unremovable, immutable, appendonly
+- FreeBSD test, check st_flags in sunlink.c
+- check with ext4 (http://ext4.wiki.kernel.org/index.php/Main_Page), jfs, xfs, reiserfs
+
+- make a library from sunlink.c so other programs can use the function
+- use only code in lib/ on platforms which don't have these functions
+- check for OS in configure.in
+- only compile files in lib/ depending on platform
+
+- overwrite raw devices by using their /dev/ device node
+- make a shared lib that can be used with LD_PRELOAD and intercepts unlink()
+
+- use O_DIRECT when opening a file. However on Linux open will
+  suceede, but the first write will fail. We can then re-try opening
+  the file without O_DIRECT and if that does not work, abort handling
+  that file.
+
+- Did you think about adding to code automatic cache clear because
+  even if program do its work when you get access to space on drive
+  you are still able to get data from it. In my situation I have to do
+  cache clear at the and (sync; echo 1 >
+  /proc/sys/vm/drop_caches;sleep 1; echo 0 >
+  /proc/sys/vm/drop_caches).  I would like to get rid off standard rm
+  completely and use srm instead, but problem is that only root can
+  write to /proc filesystem.
+
+- research if special erase commands for SSD are available to userspace
+  http://en.wikipedia.org/wiki/Trim_%28computing%29
+
+- bash completion

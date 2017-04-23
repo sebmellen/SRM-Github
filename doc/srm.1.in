@@ -1,0 +1,130 @@
+.TH "@PACKAGE@" "1" "@VERSION@" "Matt Gauthier, Dirk Jagdmann" ""
+.SH "NAME"
+srm \- securely remove files or directories
+.SH "SYNOPSIS"
+.B srm
+[\fIOPTION\fR]... \fIFILE\fR...
+.SH "DESCRIPTION"
+.PP 
+.B srm
+removes each specified file by overwriting, renaming, and truncating 
+it before unlinking.  This prevents other people from undeleting or 
+recovering any information about the file from the command line.
+By default srm uses the simple mode to overwrite the file's contents.
+You can choose a different overwrite mode with
+\fB\-\-dod\fR,
+\fB\-\-doe\fR,
+\fB\-\-openbsd\fR,
+\fB\-\-rcmp\fR,
+\fB\-\-gutmann\fR.
+If you specify more than one mode option, the last option is used.
+.P
+You can use
+.B srm
+to overwrite block devices.  The device node is not removed after
+overwriting.  This feature is available on Linux.
+Files with multiple hard links will be unlinked but not overwritten.
+.P
+.BR srm ,
+like every program that uses the getopt function to parse its
+arguments, lets you use the
+\-\-
+option to indicate that all following arguments are non\-options.
+To remove a file called `\-f' in the current directory, you could type either
+.RS
+rm \-\- \-f
+.RE
+or
+.RS
+rm ./\-f
+.SH "OPTIONS"
+.TP 
+\fB\-d\fR, \fB\-\-directory\fR
+ignored (for compatibility with \fBrm(1)\fR)
+.TP 
+\fB\-f\fR, \fB\-\-force\fR
+ignore nonexistent files, never prompt
+.TP 
+\fB\-i\fR, \fB\-\-interactive\fR
+prompt before any removal
+.TP 
+\fB\-r\fR, \fB\-R\fR, \fB\-\-recursive\fR
+remove the contents of directories recursively
+.TP 
+\fB\-x\fR, \fB\-\-one\-file\-system\fR
+when removing a hierarchy recursively, skip any directory that is on a
+file system different from that of the corresponding command line
+argument.  (Not supported on Windows)
+.TP 
+\fB\-s\fR, \fB\-\-simple\fR
+Overwrite the file with a single pass of 0x00 bytes.
+This is the default mode.
+.TP 
+\fB\-P\fR, \fB\-\-openbsd\fR
+OpenBSD compatible rm.  Files are overwritten three times, first with the byte
+0xFF, then 0x00, and then 0xFF again, before they are deleted.
+.TP 
+\fB\-D\fR, \fB\-\-dod\fR
+US Dod compliant 7\-pass overwrite.
+.TP 
+\fB\-E\fR, \fB\-\-doe\fR
+US DoE compliant 3\-pass overwrite.  Twice with a random pattern, finally with the bytes "DoE".
+See http://cio.energy.gov/CS\-11_Clearing_and_Media_Sanitization_Guidance.pdf for details.
+.TP 
+\fB\-G\fR, \fB\-\-gutmann\fR
+Use the 35\-pass Gutmann method.
+See http://en.wikipedia.org/wiki/Gutmann_method for details.
+.TP 
+\fB\-C\fR, \fB\-\-rcmp\fR
+Royal Canadian Mounted Police compliant 3\-pass overwrite.
+First pass writes 0x00 bytes.
+Second pass writes 0xFF bytes.
+Third pass writes "RCMP".
+See https://www.cse-cst.gc.ca/en/node/270/html/10572 for details.
+.TP 
+\fB\-v\fR, \fB\-\-verbose\fR
+explain what is being done.  Specify this option multiple times to increase verbosity.
+.TP 
+\fB\-h\fR, \fB\-\-help\fR
+display this help and exit.
+.TP 
+\fB\-V\fR, \fB\-\-version\fR
+output version information and exit.
+.SH "SIGNALS"
+.TP 
+\fBSIGINFO, SIGUSR2\fR
+show current write position and filename handled.
+.SH "ENTIRE HARD DISKS"
+.PP
+.B srm
+can write to block devices on Linux.  You can use srm to securely delete an entire
+hard disk, however you should only do this for classic magnetic drives.  The modern
+solid state disks (SSD) have a faster and better way to erase all contents,
+.I Secure Erase.
+For a Linux operating system see https://ata.wiki.kernel.org/index.php/ATA_Secure_Erase
+.SH "NOTES"
+.PP 
+.B srm
+can not remove write protected files owned by another user, regardless of
+the permissions on the directory containing the file.
+.PP 
+Development and discussion of srm
+is carried out at https://sourceforge.net/projects/srm/ which
+is also accessible via http://srm.sourceforge.net/.
+See http://en.wikipedia.org/wiki/Data_remanence for a general discussion about overwriting data.
+.SH "SEE ALSO"
+.TP 
+\fBrm(1)\fR
+http://www.gnu.org/software/coreutils/manual/coreutils.html#rm\-invocation
+.TP 
+\fBshred(1)\fR
+http://www.gnu.org/software/coreutils/manual/coreutils.html#shred\-invocation
+.TP 
+\fBwipe(1)\fR
+http://lambda\-diode.com/software/wipe
+.TP 
+\fBsecure\-delete\fR
+http://packages.debian.org/lenny/secure\-delete
+.TP 
+\fBscrub(1)\fR
+http://code.google.com/p/diskscrub/
